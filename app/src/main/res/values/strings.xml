@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AlarmClockDemo</string>
+    <string name="bt_addAlarm">添加</string>
+    <string name="bt_delAlarm">删除</string>
+    <string name="bt_stopWatch">秒表</string>
+    <string name="bt_weather">天气</string>
+    <string name="bt_alarmDelay">推迟五分钟</string>
+    <string name="bt_alarmStop">关闭闹钟</string>
+</resources>
