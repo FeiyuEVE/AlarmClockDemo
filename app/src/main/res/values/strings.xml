@@ -7,7 +7,7 @@
     <string name="bt_alarmDelay">推迟五分钟</string>
     <string name="bt_alarmStop">关闭闹钟</string>
     <string name="bt_stop">停止</string>
-    <string name="bt_pause">暂停</string>
+    <string name="bt_pause">分计</string>
     <string name="bt_start">开始</string>
     <string name="bt_reset">重置</string>
     <string name="bt_ok">确认</string>

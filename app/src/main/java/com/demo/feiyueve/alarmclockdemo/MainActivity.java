@@ -1,7 +1,6 @@
 package com.demo.feiyueve.alarmclockdemo;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,30 +12,30 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static android.R.id.list;
 
 public class MainActivity extends AppCompatActivity{
 
-    Button bt_addAlarm = (Button) findViewById(R.id.bt_addAlarm);
-    Button bt_weather = (Button) findViewById(R.id.bt_addWeather);
-    Button bt_delAlarm = (Button) findViewById(R.id.bt_delAlarm);
-    Button bt_stopWatch = (Button) findViewById(R.id.bt_stopWatch);
-    ListView listView = (ListView) findViewById(R.id.listView);
-    TimePicker timePicker = (TimePicker) findViewById(R.id.timePicker);
-    ArrayList<String> alarmList = new ArrayList<String>();
+    private ArrayAdapter<String> adapter;
+    private ArrayList<String> alarmList = new ArrayList<String>();
+    private TimePicker timePicker;
+    private ListView listView;
+    private String city;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Button bt_addAlarm = (Button) findViewById(R.id.bt_addAlarm);
+        Button bt_weather = (Button) findViewById(R.id.bt_addWeather);
+        Button bt_stopWatch = (Button) findViewById(R.id.bt_stopWatch);
+        listView = (ListView) findViewById(R.id.listView);
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
+
         resetAlarmList();
 
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>
+        adapter = new ArrayAdapter<String>
                 (this,android.R.layout.simple_list_item_multiple_choice,alarmList);
         listView.setAdapter(adapter);
 
@@ -77,14 +76,14 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-        //删除闹钟
-        bt_delAlarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
+    }
 
+    public String getCity(){
+        Intent intent = getIntent();
+        String str =  intent.getStringExtra("com.addWeather.city");
+        Toast.makeText(MainActivity.this,"你选择的城市为"+str,Toast.LENGTH_LONG).show();
+        return str;
     }
 
     //重置AlarmList
