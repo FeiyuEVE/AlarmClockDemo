@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".AddAlarmActivity" />
         <activity android:name=".StopwatchActivity" />
-        <activity android:name=".AlarmclockActivity"></activity>
+        <activity android:name=".AlarmclockActivity" />
+        <activity android:name=".Addweather"></activity>
     </application>
 
 </manifest>
