@@ -1,5 +1,10 @@
 package com.demo.feiyueve.alarmclockdemo;
 
+/**
+ * Created by FeiyuEVE on 2017/9/17.
+ */
+
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +25,6 @@ public class MainActivity extends AppCompatActivity{
     private TimePicker timePicker;
     private ListView listView;
     private String city;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +81,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
-    }
 
-    public String getCity(){
-        Intent intent = getIntent();
-        String str =  intent.getStringExtra("com.addWeather.city");
-        Toast.makeText(MainActivity.this,"你选择的城市为"+str,Toast.LENGTH_LONG).show();
-        return str;
     }
 
     //重置AlarmList

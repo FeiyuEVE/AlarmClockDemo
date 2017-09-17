@@ -24,6 +24,7 @@
         android:id="@+id/editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:digits="qwertyuiopasdfghjklzxcvbnm"
         android:ems="10"
         android:inputType="textPersonName"
         android:hint = "@string/hint_city"
