@@ -16,12 +16,13 @@ import android.widget.Toast;
 
 public class Addweather extends AppCompatActivity {
     private EditText editText;
-    private SharedPreferences.Editor editor = getSharedPreferences("city",MODE_PRIVATE).edit();
+    private SharedPreferences.Editor editor;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addweather);
 
+        editor = getSharedPreferences("city",MODE_PRIVATE).edit();
         editText = (EditText) findViewById(R.id.editText);
         Button bt_addWeather = (Button) findViewById(R.id.bt_addWeather);
 
