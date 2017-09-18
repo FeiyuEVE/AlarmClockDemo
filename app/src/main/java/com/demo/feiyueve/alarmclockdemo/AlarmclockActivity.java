@@ -37,7 +37,6 @@ public class AlarmclockActivity extends AppCompatActivity {
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://m.tianqi.com"+cityData+"");
-
+        webView.loadUrl("https://m.tianqi.com/"+cityData+"");
     }
 }
