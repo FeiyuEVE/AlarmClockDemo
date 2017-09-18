@@ -3,6 +3,7 @@
     package="com.demo.feiyueve.alarmclockdemo">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <receiver android:name="com.example.alarmmanagerdemo.AlarmReceiver" android:process=":remote"/>
 
     <application
         android:allowBackup="true"
@@ -20,7 +21,11 @@
         </activity>
         <activity android:name=".AddAlarmActivity" />
         <activity android:name=".StopwatchActivity" />
-        <activity android:name=".AlarmclockActivity" />
+        <activity android:name=".AlarmclockActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.alarm" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Addweather"></activity>
     </application>
 
