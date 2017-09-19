@@ -5,21 +5,35 @@ package com.demo.feiyueve.alarmclockdemo;
  */
 
 
+import android.Manifest;
+import android.app.AlarmManager;
+import android.app.Service;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.os.Environment;
+import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.File;
+
 public class AlarmclockActivity extends AppCompatActivity {
 
     private String cityData;
     private WebView webView;
-    private Button bt_alarmDelay,bt_alarmStop;
+    private Button bt_alarmStop;
     private SharedPreferences city;
+    private MediaPlayer mediaPlayer;
+    private Vibrator mVibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +44,33 @@ public class AlarmclockActivity extends AppCompatActivity {
         cityData = city.getString("city","");
 
         webView = (WebView) findViewById(R.id.webView);
-        bt_alarmDelay = (Button) findViewById(R.id.bt_alarmDelay);
         bt_alarmStop = (Button) findViewById(R.id.bt_alarmStop);
-
-
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://m.tianqi.com/"+cityData+"");
+
+        initMediaPlayer();
+        mVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
+        mVibrator.  ;
+
+        bt_alarmStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.stop();
+                onStop();
+            }
+        });
+    }
+
+    private void initMediaPlayer(){
+        mediaPlayer = MediaPlayer.create(AlarmclockActivity.this,R.raw.music);
+        mediaPlayer.start();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mVibrator.cancel();
     }
 }

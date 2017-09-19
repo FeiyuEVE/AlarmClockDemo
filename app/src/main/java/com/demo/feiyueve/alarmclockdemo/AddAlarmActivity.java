@@ -14,8 +14,6 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
 public class AddAlarmActivity extends AppCompatActivity {
 
     private TimePicker timePicker;
@@ -45,14 +43,27 @@ public class AddAlarmActivity extends AppCompatActivity {
         });
     }
     public void addAlarm(){
-        timeEditor.putInt("count",0);
-        timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",1),getHourTime());
-        timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",1),getMinuteTime());
-        timeEditor.putInt("count",alarmTime.getInt("count",1)+1);
-        String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + (alarmTime.getInt("count",1)-1),1))
-                +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+(alarmTime.getInt("count",1)-1),1));
-        if(timeEditor.commit()) {
-            Toast.makeText(AddAlarmActivity.this, "添加闹钟成功:"+temp, Toast.LENGTH_LONG).show();
+        if(alarmTime.getInt("count",1)<7){
+            timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",0),getHourTime());
+            timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",0),getMinuteTime());
+            timeEditor.apply();
+            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),1))
+                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),1));
+            timeEditor.putInt("count",alarmTime.getInt("count",0)+1);
+            if(timeEditor.commit()) {
+                Toast.makeText(AddAlarmActivity.this, "添加闹钟成功:"+temp, Toast.LENGTH_LONG).show();
+            }
+        }else {
+            timeEditor.putInt("count",0);
+            timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",0),getHourTime());
+            timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",0),getMinuteTime());
+            timeEditor.apply();
+            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),1) )
+                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),1) );
+            timeEditor.putInt("count",alarmTime.getInt("count",0)+1);
+            if(timeEditor.commit()) {
+                Toast.makeText(AddAlarmActivity.this, "添加闹钟成功*:"+temp, Toast.LENGTH_LONG).show();
+        }
         }
     }
 

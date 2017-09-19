@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.demo.feiyueve.alarmclockdemo">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
-    <receiver android:name="com.example.alarmmanagerdemo.AlarmReceiver" android:process=":remote"/>
+    <receiver android:name="com.demo.feiyueve.alarmclockdemo.AlarmReceiver" android:process=":remote"/>
 
     <application
         android:allowBackup="true"
