@@ -52,7 +52,7 @@ public class AlarmclockActivity extends AppCompatActivity {
 
         initMediaPlayer();
         mVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
-        mVibrator.  ;
+        mVibrator.vibrate(new long[]{400,400,400,400},2);
 
         bt_alarmStop.setOnClickListener(new View.OnClickListener() {
             @Override

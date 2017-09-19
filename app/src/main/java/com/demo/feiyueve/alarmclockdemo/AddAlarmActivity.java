@@ -44,11 +44,11 @@ public class AddAlarmActivity extends AppCompatActivity {
     }
     public void addAlarm(){
         if(alarmTime.getInt("count",1)<7){
-            timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",0),getHourTime());
-            timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",0),getMinuteTime());
+            timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",-1),getHourTime());
+            timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",-1),getMinuteTime());
             timeEditor.apply();
-            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),1))
-                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),1));
+            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",1),-1))
+                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",1),-1));
             timeEditor.putInt("count",alarmTime.getInt("count",0)+1);
             if(timeEditor.commit()) {
                 Toast.makeText(AddAlarmActivity.this, "添加闹钟成功:"+temp, Toast.LENGTH_LONG).show();
@@ -58,8 +58,8 @@ public class AddAlarmActivity extends AppCompatActivity {
             timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",0),getHourTime());
             timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",0),getMinuteTime());
             timeEditor.apply();
-            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),1) )
-                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),1) );
+            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),-1) )
+                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),-1) );
             timeEditor.putInt("count",alarmTime.getInt("count",0)+1);
             if(timeEditor.commit()) {
                 Toast.makeText(AddAlarmActivity.this, "添加闹钟成功*:"+temp, Toast.LENGTH_LONG).show();
