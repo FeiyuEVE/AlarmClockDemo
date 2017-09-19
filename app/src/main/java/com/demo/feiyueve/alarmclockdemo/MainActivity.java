@@ -17,14 +17,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import static android.R.attr.format;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -51,6 +48,7 @@ public class MainActivity extends AppCompatActivity{
         Button bt_addAlarm = (Button) findViewById(R.id.bt_addAlarm);
         Button bt_weather = (Button) findViewById(R.id.bt_addWeather);
         Button bt_stopWatch = (Button) findViewById(R.id.bt_stopWatch);
+        Button bt_empty = (Button) findViewById(R.id.bt_empty);
         listView = (ListView) findViewById(R.id.listView);
 
         mCalendar = Calendar.getInstance();
@@ -66,32 +64,28 @@ public class MainActivity extends AppCompatActivity{
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         checkTime();
+
         resetAlarmList();
-
-
         adapter = new ArrayAdapter<String>
-                (this,android.R.layout.simple_list_item_1);
+                (this,android.R.layout.simple_list_item_1,alarmList);
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                @Override
                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
                {
-                   alarmList.remove(i);
-                   adapter.notifyDataSetChanged();
-                   for(int j=0;j<10;j++) {
-                       newCalendar = Calendar.getInstance();
-                       newCalendar.setTimeInMillis(System.currentTimeMillis());
-                       mCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-                       newCalendar.set(Calendar.HOUR_OF_DAY, sharedPreferences.getInt("alarmTime_Hour" + j, -1));
-                       newCalendar.set(Calendar.MINUTE, sharedPreferences.getInt("alarmTime_Minute" + j, -1));
-                       alarmClock = newCalendar.getTimeInMillis();
-                       if (alarmClock < systemTime) {
-                           timeEditor.putInt("alarmTime_Hour"+i,-1);
-                           timeEditor.putInt("alarmTime_Minute"+i,-1);
-                           timeEditor.apply();
+                   Toast.makeText(MainActivity.this,sharedPreferences.getInt("alarmTime_Hour" , 0)
+                           + ":" +sharedPreferences.getInt("alarmTime_Minute", 0),Toast.LENGTH_LONG).show();
+                   for(int j=0;j<=sharedPreferences.getInt("count",9);j++) {
+                       String timeTemp = sharedPreferences.getInt("alarmTime_Hour" + j, 0)
+                               + ":" +sharedPreferences.getInt("alarmTime_Minute" + j, 0);
+                       if (timeTemp == alarmList.get(i)) {
+                           timeEditor.putInt("alarmTime_Hour"+j,-1);
+                           timeEditor.putInt("alarmTime_Minute"+j,-1);
+                           alarmList.remove(i);
+                           adapter.notifyDataSetChanged();
+                           Toast.makeText(MainActivity.this,"闹钟删除成功",Toast.LENGTH_LONG).show();
                        }
                    }
-                   Toast.makeText(MainActivity.this,"该闹钟已删除",Toast.LENGTH_LONG);
                    return true;
                }
         });
@@ -124,24 +118,35 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+
+        bt_empty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alarmList.clear();
+                timeEditor.clear();
+                timeEditor.commit();
+            }
+        });
     }
 
     //重置AlarmList
     public void resetAlarmList(){
-        for(int i=0;i<10;i++)
+        for(int i=0;i<sharedPreferences.getInt("count",9);i++)
         {
-            alarmList.add(String.valueOf(newCalendar));
+            alarmList.add(0,sharedPreferences.getInt("alarmTime_Hour" +i, 0)
+                    +":"+sharedPreferences.getInt("alarmTime_Minute" +i, 0));
         }
     }
 
     public void checkTime(){
-        for(int i=0;i<10;i++){
+        for(int i=0;i<sharedPreferences.getInt("count",9);i++){
             newCalendar = Calendar.getInstance();
             newCalendar.setTimeInMillis(System.currentTimeMillis());
             mCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
             newCalendar.set(Calendar.HOUR_OF_DAY,sharedPreferences.getInt("alarmTime_Hour"+i,-1));
             newCalendar.set(Calendar.MINUTE,sharedPreferences.getInt("alarmTime_Minute"+i,-1));
             alarmClock = newCalendar.getTimeInMillis();
+
             if(alarmClock<systemTime){
                 newCalendar.add(Calendar.DAY_OF_MONTH, 1);
                 alarmClock = newCalendar.getTimeInMillis();
@@ -149,8 +154,12 @@ public class MainActivity extends AppCompatActivity{
             time = alarmClock - systemTime;
             firstTime += time;
 
-            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,firstTime,AlarmManager.INTERVAL_DAY,pendingIntent);
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,firstTime,pendingIntent);
         }
+    }
+
+    public int min(){
+        
     }
 }
 

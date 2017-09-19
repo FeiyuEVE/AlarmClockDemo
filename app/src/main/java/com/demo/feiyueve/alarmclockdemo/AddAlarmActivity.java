@@ -6,11 +6,11 @@ package com.demo.feiyueve.alarmclockdemo;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -33,32 +33,40 @@ public class AddAlarmActivity extends AppCompatActivity {
         timeEditor = getSharedPreferences("alarmTime",MODE_PRIVATE).edit();
         alarmTime = getSharedPreferences("alarmTime",MODE_PRIVATE);
 
-        timeEditor.putInt("alarmTime_Hour"+0,-1);
-
         bt_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-                @Override
-                public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minuteOfHour) {
-                    for(int i=0;i<10;i++){
-                        if(alarmTime.getInt("alarmTime_Hour"+i,-1)!=-1&&alarmTime.getInt("alarmTime_Minute"+i,-1)!=-1){
-                            continue;
-                        }
-                        if(alarmTime.getInt("alarmTime_Hour"+i,-1)==-1||alarmTime.getInt("alarmTime_Minute"+i,-1)==-1) {
-                            timeEditor.putInt("alarmTime_Hour"+i,hourOfDay);
-                            timeEditor.putInt("alarmTime_Minute"+i,minuteOfHour);
-                            timeEditor.apply();
-                            Toast.makeText(AddAlarmActivity.this,"添加闹钟成功",Toast.LENGTH_LONG);
-                            break;
-                        }
-                    }
-                }
-            });
+                addAlarm();
                 Intent intent = new Intent();
                 intent.setClass(AddAlarmActivity.this,MainActivity.class);
+                AddAlarmActivity.this.finish();
                 startActivity(intent);
             }
         });
+    }
+    public void addAlarm(){
+        timeEditor.putInt("count",0);
+        timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",1),getHourTime());
+        timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",1),getMinuteTime());
+        timeEditor.putInt("count",alarmTime.getInt("count",1)+1);
+        String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + (alarmTime.getInt("count",1)-1),1))
+                +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+(alarmTime.getInt("count",1)-1),1));
+        if(timeEditor.commit()) {
+            Toast.makeText(AddAlarmActivity.this, "添加闹钟成功:"+temp, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public int getHourTime(){
+        if (Build.VERSION.SDK_INT >= 23 )
+            return timePicker.getHour();
+        else
+            return timePicker.getCurrentHour();
+    }
+
+    public int getMinuteTime(){
+        if (Build.VERSION.SDK_INT >= 23 )
+            return timePicker.getMinute();
+        else
+            return timePicker.getCurrentMinute();
     }
 }

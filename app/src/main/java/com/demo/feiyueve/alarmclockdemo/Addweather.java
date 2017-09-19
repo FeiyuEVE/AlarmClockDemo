@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.provider.AlarmClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ public class Addweather extends AppCompatActivity {
                 saveCityData();
                 Intent intent = new Intent();
                 intent.setClass(Addweather.this, MainActivity.class);
+                Addweather.this.finish();
                 startActivity(intent);
             }
         });
@@ -39,7 +41,21 @@ public class Addweather extends AppCompatActivity {
 
     public void saveCityData(){
         editor.putString("city",editText.getText().toString());
-        editor.apply();
-        Toast.makeText(Addweather.this,"城市添加成功",Toast.LENGTH_LONG).show();
+        if(editor.commit()) {
+            Toast.makeText(Addweather.this, "城市添加成功", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK )
+        {
+            Intent intent = new Intent();
+            intent.setClass(Addweather.this,MainActivity.class);
+            Addweather.this.finish();
+            startActivity(intent);
+        }
+        return true;
     }
 }

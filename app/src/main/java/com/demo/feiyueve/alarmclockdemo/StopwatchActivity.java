@@ -5,9 +5,11 @@ package com.demo.feiyueve.alarmclockdemo;
  */
 
 
+import android.content.Intent;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -79,6 +81,19 @@ public class StopwatchActivity extends AppCompatActivity{
         });
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK )
+        {
+            Intent intent = new Intent();
+            intent.setClass(StopwatchActivity.this,MainActivity.class);
+            StopwatchActivity.this.finish();
+            startActivity(intent);
+
+        }
+        return true;
+    }
     public void resetArray(){
         for(int i=0;i<=6;i++){
             arrayList.add("00:00");
