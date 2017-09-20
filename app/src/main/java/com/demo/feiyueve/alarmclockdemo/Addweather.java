@@ -33,8 +33,8 @@ public class Addweather extends AppCompatActivity {
                 saveCityData();
                 Intent intent = new Intent();
                 intent.setClass(Addweather.this, MainActivity.class);
-                Addweather.this.finish();
                 startActivity(intent);
+                Addweather.this.finish();
             }
         });
     }
@@ -53,8 +53,8 @@ public class Addweather extends AppCompatActivity {
         {
             Intent intent = new Intent();
             intent.setClass(Addweather.this,MainActivity.class);
-            Addweather.this.finish();
             startActivity(intent);
+            Addweather.this.finish();
         }
         return true;
     }

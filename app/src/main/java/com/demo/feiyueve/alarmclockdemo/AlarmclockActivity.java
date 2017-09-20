@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -34,7 +35,7 @@ public class AlarmclockActivity extends AppCompatActivity {
 
     private String cityData;
     private WebView webView;
-    private Button bt_alarmStop;
+    private Button bt_alarmStop,bt_stopAlarm;
     private SharedPreferences city;
     private MediaPlayer mediaPlayer;
     private Vibrator mVibrator;
@@ -51,6 +52,7 @@ public class AlarmclockActivity extends AppCompatActivity {
 
         webView = (WebView) findViewById(R.id.webView);
         bt_alarmStop = (Button) findViewById(R.id.bt_alarmStop);
+        bt_stopAlarm = (Button) findViewById(R.id.bt_stopAlarm);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
@@ -63,17 +65,22 @@ public class AlarmclockActivity extends AppCompatActivity {
         bt_alarmStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mediaPlayer.stop();
-                onStop();
-
                 Intent intent2 = new Intent();
                 intent2.setAction("android.intent.action.cancel");
                 localBroadcastManager.sendBroadcast(intent2);
 
                 Intent intent = new Intent();
                 intent.setClass(AlarmclockActivity.this,MainActivity.class);
-                AlarmclockActivity.this.finish();
                 startActivity(intent);
+                AlarmclockActivity.this.finish();
+            }
+        });
+
+        bt_stopAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.stop();
+                onStop();
             }
         });
     }
@@ -87,5 +94,23 @@ public class AlarmclockActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mVibrator.cancel();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK )
+        {
+            mediaPlayer.stop();
+            onStop();
+            Intent intent2 = new Intent();
+            intent2.setAction("android.intent.action.cancel");
+            localBroadcastManager.sendBroadcast(intent2);
+            Intent intent = new Intent();
+            intent.setClass(AlarmclockActivity.this,MainActivity.class);
+            startActivity(intent);
+            AlarmclockActivity.this.finish();
+        }
+        return true;
     }
 }

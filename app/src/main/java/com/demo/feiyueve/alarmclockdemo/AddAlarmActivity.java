@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
@@ -37,8 +38,8 @@ public class AddAlarmActivity extends AppCompatActivity {
                 addAlarm();
                 Intent intent = new Intent();
                 intent.setClass(AddAlarmActivity.this,MainActivity.class);
-                AddAlarmActivity.this.finish();
                 startActivity(intent);
+                AddAlarmActivity.this.finish();
             }
         });
     }
@@ -83,5 +84,19 @@ public class AddAlarmActivity extends AppCompatActivity {
             return timePicker.getMinute();
         else
             return timePicker.getCurrentMinute();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK )
+        {
+            Intent intent = new Intent();
+            intent.setClass(AddAlarmActivity.this,MainActivity.class);
+            startActivity(intent);
+            AddAlarmActivity.this.finish();
+
+        }
+        return true;
     }
 }

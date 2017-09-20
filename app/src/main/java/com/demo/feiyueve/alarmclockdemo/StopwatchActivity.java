@@ -88,8 +88,8 @@ public class StopwatchActivity extends AppCompatActivity{
         {
             Intent intent = new Intent();
             intent.setClass(StopwatchActivity.this,MainActivity.class);
-            StopwatchActivity.this.finish();
             startActivity(intent);
+            StopwatchActivity.this.finish();
 
         }
         return true;

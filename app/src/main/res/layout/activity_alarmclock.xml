@@ -13,10 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/bt_alarmStop"
-        tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -32,5 +30,14 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1" />
+
+    <Button
+        android:id="@+id/bt_stopAlarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bt_stopAlarm"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintTop_creator="1"
+        app:layout_constraintTop_toBottomOf="@+id/webView" />
 
 </android.support.constraint.ConstraintLayout>

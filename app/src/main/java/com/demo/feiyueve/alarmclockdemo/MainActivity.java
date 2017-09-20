@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.litepal.tablemanager.Connector;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Connector.getDatabase();
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmClockIntent = new Intent();
 
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,AddAlarmActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,StopwatchActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,Addweather.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -176,7 +182,6 @@ public class MainActivity extends AppCompatActivity{
                 count++;
             }
         }
-
         return minAlarmClock;
     }
 
