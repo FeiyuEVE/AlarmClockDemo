@@ -21,12 +21,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity{
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity{
     private ArrayAdapter<String> adapter;
     private SharedPreferences.Editor timeEditor;
     private SharedPreferences sharedPreferences;
-    private ArrayList<String> alarmList = new ArrayList<String>();
+    private List<String> alarmList = new ArrayList<String>(7);
     private ListView listView;
     private Calendar mCalendar,newCalendar,sysCalendar;
     private AlarmManager alarmManager;
@@ -146,10 +148,10 @@ public class MainActivity extends AppCompatActivity{
     }
     //重置AlarmList
     public void resetAlarmList(){
-        for(int i=0;i<7;i++)
-        {
-            alarmList.add(0,sharedPreferences.getInt("alarmTime_Hour" +i, -1)
-                    +":"+sharedPreferences.getInt("alarmTime_Minute" +i, -1));
+        List<AlarmTime> alarmTimes = DataSupport.findAll(AlarmTime.class);
+        for(AlarmTime alarmTime:alarmTimes){
+            String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(alarmTime.getCalendar().getTime());
+            alarmList.add(0,date);
         }
     }
 

@@ -11,11 +11,28 @@ import java.util.Calendar;
 public class AlarmTime extends DataSupport {
     private int id;
     private Calendar calendar;
+    private long millsTime;
     private boolean repeat;
     private int alarmHour;
     private int alamrmMinute;
     private String weekDay;
     private boolean launch;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public long getMillsTime() {
+        return millsTime;
+    }
+
+    public void setMillsTime(Calendar calendar) {
+        this.millsTime = calendar.getTimeInMillis();
+    }
 
     public Calendar getCalendar() {
         return calendar;
