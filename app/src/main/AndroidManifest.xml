@@ -29,6 +29,7 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
+                <action android:name="android.intent.action.cancel"/>
                 <action android:name="android.intent.action.alarm" />
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

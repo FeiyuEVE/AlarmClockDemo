@@ -7,7 +7,10 @@ package com.demo.feiyueve.alarmclockdemo;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,7 +29,7 @@ import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity{
 
-    private long firstClickTime = 0;
+    private long systemTime;
     private ArrayAdapter<String> adapter;
     private SharedPreferences.Editor timeEditor;
     private SharedPreferences sharedPreferences;
@@ -35,7 +38,6 @@ public class MainActivity extends AppCompatActivity{
     private Calendar mCalendar,newCalendar,sysCalendar;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    private long systemTime;
     private Intent alarmClockIntent;
     private int count=0;
 
@@ -86,8 +88,6 @@ public class MainActivity extends AppCompatActivity{
                }
         });
 
-        alarmClock();
-
         //打开添加闹钟
         bt_addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,8 +125,19 @@ public class MainActivity extends AppCompatActivity{
                 adapter.notifyDataSetChanged();
             }
         });
+
+        alarmClock();
     }
 
+    class LocalReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if("android.intent.action.cancel".equals(intent.getAction())) {
+                AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+                am.cancel(pendingIntent);
+            }
+        }
+    }
     //重置AlarmList
     public void resetAlarmList(){
         for(int i=0;i<7;i++)
@@ -166,16 +177,16 @@ public class MainActivity extends AppCompatActivity{
             }
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy年-MM月dd日-HH时mm分ss秒");
-        Date date = new Date(minAlarmClock);
-        Toast.makeText(MainActivity.this,"闹钟启动：\n"+formatter.format(date),Toast.LENGTH_LONG).show();
         return minAlarmClock;
     }
 
-    public void alarmClock(){
-        alarmClockIntent.setAction("android.intent.action.alarm");
-        pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0,alarmClockIntent,0);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP,minAlarmClock(),pendingIntent);
+    public void alarmClock() {
+        if (minAlarmClock() < 5000000000000000000L){
+            Toast.makeText(MainActivity.this, "闹钟启动", Toast.LENGTH_SHORT).show();
+            alarmClockIntent.setAction("android.intent.action.alarm");
+            pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmClockIntent, 0);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, minAlarmClock(), pendingIntent);
+         }
     }
 }
 

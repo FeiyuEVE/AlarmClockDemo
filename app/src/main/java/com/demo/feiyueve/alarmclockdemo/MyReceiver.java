@@ -10,7 +10,7 @@ public class MyReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if("android.intent.action.alarm".equals(intent.getAction())) {
-            Intent intent1 = new Intent(context, AlarmClock.class);
+            Intent intent1 = new Intent(context, AlarmclockActivity.class);
             intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent1);
         }
