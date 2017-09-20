@@ -9,14 +9,11 @@ import java.util.Calendar;
  */
 
 public class AlarmTime extends DataSupport {
-    private int id;
     private Calendar calendar;
+    private int id;
     private long millsTime;
-    private boolean repeat;
     private int alarmHour;
     private int alamrmMinute;
-    private String weekDay;
-    private boolean launch;
 
     public int getId() {
         return id;
@@ -42,45 +39,20 @@ public class AlarmTime extends DataSupport {
         this.calendar = calendar;
     }
 
-    public boolean isRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
-    }
-
     public int getAlarmHour() {
         return alarmHour;
     }
 
-    public void setAlarmHour(int alarmHour) {
-        this.alarmHour = alarmHour;
+    public void setAlarmHour(Calendar calendar) {
+        this.alarmHour = calendar.get(Calendar.HOUR_OF_DAY);
     }
 
     public int getAlamrmMinute() {
         return alamrmMinute;
     }
 
-    public void setAlamrmMinute(int alamrmMinute) {
-        this.alamrmMinute = alamrmMinute;
+    public void setAlamrmMinute(Calendar calendar) {
+        this.alamrmMinute = calendar.get(Calendar.MINUTE);
     }
-
-    public String getWeekDay() {
-        return weekDay;
-    }
-
-    public void setWeekDay(String weekDay) {
-        this.weekDay = weekDay;
-    }
-
-    public boolean isLaunch() {
-        return launch;
-    }
-
-    public void setLaunch(boolean launch) {
-        this.launch = launch;
-    }
-
 
 }

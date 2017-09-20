@@ -10,8 +10,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -27,23 +25,18 @@ import org.litepal.tablemanager.Connector;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity{
 
-    private long systemTime;
     private ArrayAdapter<String> adapter;
-    private SharedPreferences.Editor timeEditor;
-    private SharedPreferences sharedPreferences;
-    private List<String> alarmList = new ArrayList<String>(7);
+    private List<String> alarmList = new ArrayList<String>();
     private ListView listView;
-    private Calendar mCalendar,newCalendar,sysCalendar;
+    private Calendar mCalendar,sysCalendar;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private Intent alarmClockIntent;
-    private int count=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +56,6 @@ public class MainActivity extends AppCompatActivity{
         mCalendar.setTimeInMillis(System.currentTimeMillis());
         mCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
 
-        timeEditor = getSharedPreferences("alarmTime",MODE_PRIVATE).edit();
-
-        sharedPreferences = getSharedPreferences("alarmTime",MODE_PRIVATE);
-
         resetAlarmList();
 
         adapter = new ArrayAdapter<String>
@@ -77,18 +66,16 @@ public class MainActivity extends AppCompatActivity{
                @Override
                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
                {
-                   for(int j=0;j<7;j++) {
-                       String timeTemp = sharedPreferences.getInt("alarmTime_Hour" + j, -1)
-                               + ":" +sharedPreferences.getInt("alarmTime_Minute" + j, -1);
-                       if (alarmList.get(i).equals(timeTemp)){
-                           timeEditor.putInt("alarmTime_Hour"+j,-1);
-                           timeEditor.putInt("alarmTime_Minute"+j,-1);
-                           timeEditor.apply();
-                           Toast.makeText(MainActivity.this,"闹钟删除成功",Toast.LENGTH_LONG).show();
+                   List<AlarmTime> alarmTimes = DataSupport.select("millsTime","id").find(AlarmTime.class);
+                   int j=0;
+                   for(AlarmTime alarmTime:alarmTimes){
+                       String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(alarmTime.getCalendar().getTime());
+                       if(date.equals(alarmList.get(j))){
+                           DataSupport.delete(AlarmTime.class,alarmTime.getId());
                        }
+                       j++;
                    }
                    alarmList.remove(i);
-                   adapter.notifyDataSetChanged();
                    return true;
                }
         });
@@ -127,8 +114,7 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 alarmList.clear();
-                timeEditor.clear();
-                timeEditor.commit();
+                DataSupport.deleteAll(AlarmTime.class);
                 resetAlarmList();
                 adapter.notifyDataSetChanged();
             }
@@ -151,49 +137,21 @@ public class MainActivity extends AppCompatActivity{
         List<AlarmTime> alarmTimes = DataSupport.findAll(AlarmTime.class);
         for(AlarmTime alarmTime:alarmTimes){
             String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(alarmTime.getCalendar().getTime());
-            alarmList.add(0,date);
+            alarmList.add(date);
         }
     }
 
     //筛选距当前最近的一个闹钟
     public long minAlarmClock() {
-        long temp[]={9000000000000000000L,9000000000000000000L,9000000000000000000L,9000000000000000000L,
-                9000000000000000000L,9000000000000000000L,9000000000000000000L,9000000000000000000L},minAlarmClock=9000000000000000000L;
-        sysCalendar = Calendar.getInstance();
-        sysCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        sysCalendar.setTimeInMillis(System.currentTimeMillis());
-        newCalendar = Calendar.getInstance();
-        newCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        newCalendar.setTimeInMillis(System.currentTimeMillis());
-        for (int i = 0; i < 7; i++) {
-            newCalendar.set(Calendar.HOUR_OF_DAY, sharedPreferences.getInt("alarmTime_Hour" + i,-1));
-            newCalendar.set(Calendar.MINUTE, sharedPreferences.getInt("alarmTime_Minute" + i,-1));
-            if(sharedPreferences.getInt("alarmTime_Hour" + i,-1)!=-1) {
-                temp[count] = newCalendar.getTimeInMillis();
-                systemTime = sysCalendar.getTimeInMillis();
-                if (newCalendar.compareTo(sysCalendar) == -1) {
-                    newCalendar.add(Calendar.DATE, 1);
-                    temp[count] = newCalendar.getTimeInMillis();
-                }
-                minAlarmClock = temp[7];
-                for (int j = 0; j <= count; j++) {
-                    if (j < 6 && minAlarmClock > temp[j]) {
-                        minAlarmClock = temp[j];
-                    }
-                }
-                count++;
-            }
-        }
-        return minAlarmClock;
+        List<AlarmTime> alarmTimes = DataSupport.order("millsTime desc").find(AlarmTime.class);
+        return alarmTimes.get(0).getMillsTime();
     }
 
     public void alarmClock() {
-        if (minAlarmClock() < 5000000000000000000L){
             Toast.makeText(MainActivity.this, "闹钟启动", Toast.LENGTH_SHORT).show();
             alarmClockIntent.setAction("android.intent.action.alarm");
             pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmClockIntent, 0);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, minAlarmClock(), pendingIntent);
-         }
+            alarmManager.set(AlarmManager.RTC_WAKEUP, minAlarmClock(), pendingIntent);
     }
 }
 

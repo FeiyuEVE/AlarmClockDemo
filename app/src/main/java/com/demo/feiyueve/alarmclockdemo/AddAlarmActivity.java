@@ -5,7 +5,6 @@ package com.demo.feiyueve.alarmclockdemo;
  */
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,12 +14,15 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import org.litepal.crud.DataSupport;
+
+import java.util.Calendar;
+import java.util.List;
+
 public class AddAlarmActivity extends AppCompatActivity {
 
     private TimePicker timePicker;
     private Button bt_ok;
-    private SharedPreferences.Editor timeEditor;
-    private SharedPreferences alarmTime;;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +31,6 @@ public class AddAlarmActivity extends AppCompatActivity {
         timePicker = (TimePicker) findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
         bt_ok = (Button) findViewById(R.id.bt_ok);
-        timeEditor = getSharedPreferences("alarmTime",MODE_PRIVATE).edit();
-        alarmTime = getSharedPreferences("alarmTime",MODE_PRIVATE);
 
         bt_ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,31 +44,23 @@ public class AddAlarmActivity extends AppCompatActivity {
         });
     }
     public void addAlarm(){
-        if(alarmTime.getInt("count",0)<7){
-            if(alarmTime.getInt("count",-1)==-1){
-                timeEditor.putInt("count",0);
-                timeEditor.apply();
-            }
-            timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",0),getHourTime());
-            timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",0),getMinuteTime());
-            timeEditor.apply();
-            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),-1))
-                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),-1));
-            timeEditor.putInt("count",alarmTime.getInt("count",0)+1);
-            if(timeEditor.commit()) {
-                Toast.makeText(AddAlarmActivity.this, "添加闹钟成功:"+temp, Toast.LENGTH_LONG).show();
-            }
-        }else {
-            timeEditor.putInt("count",0);
-            timeEditor.putInt("alarmTime_Hour" + alarmTime.getInt("count",0),getHourTime());
-            timeEditor.putInt("alarmTime_Minute" + alarmTime.getInt("count",0),getMinuteTime());
-            timeEditor.apply();
-            String temp = String.valueOf(alarmTime.getInt("alarmTime_Hour" + alarmTime.getInt("count",0),-1) )
-                    +":"+String.valueOf(alarmTime.getInt("alarmTime_Minute"+ alarmTime.getInt("count",0),-1) );
-            timeEditor.putInt("count",alarmTime.getInt("count",0)+1);
-            if(timeEditor.commit()) {
-                Toast.makeText(AddAlarmActivity.this, "添加闹钟成功*:"+temp, Toast.LENGTH_LONG).show();
+        List<AlarmTime> alarmTimes = DataSupport.order("id desc").find(AlarmTime.class);
+        Calendar calendar = Calendar.getInstance();
+        Calendar sysCal = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, getHourTime());
+        calendar.set(Calendar.MINUTE, getMinuteTime());
+        if(calendar.getTimeInMillis()<sysCal.getTimeInMillis()){
+            calendar.add(Calendar.DATE,1);
         }
+        if(alarmTimes.get(0).getId()<7) {
+            AlarmTime alarmTime = new AlarmTime();
+            alarmTime.setCalendar(calendar);
+            alarmTime.setAlamrmMinute(calendar);
+            alarmTime.setAlarmHour(calendar);
+            alarmTime.setMillsTime(calendar);
+            alarmTime.save();
+        }else{
+            Toast.makeText(AddAlarmActivity.this,"闹钟已添加满\n请先删除其它闹钟",Toast.LENGTH_SHORT).show();
         }
     }
 
