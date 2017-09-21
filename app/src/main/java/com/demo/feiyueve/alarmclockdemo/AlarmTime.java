@@ -9,7 +9,6 @@ import java.util.Calendar;
  */
 
 public class AlarmTime extends DataSupport {
-    private Calendar calendar;
     private int id;
     private long millsTime;
     private int alarmHour;
@@ -27,32 +26,23 @@ public class AlarmTime extends DataSupport {
         return millsTime;
     }
 
-    public void setMillsTime(Calendar calendar) {
-        this.millsTime = calendar.getTimeInMillis();
-    }
-
-    public Calendar getCalendar() {
-        return calendar;
-    }
-
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
+    public void setMillsTime(long millsTime) {
+        this.millsTime = millsTime;
     }
 
     public int getAlarmHour() {
         return alarmHour;
     }
 
-    public void setAlarmHour(Calendar calendar) {
-        this.alarmHour = calendar.get(Calendar.HOUR_OF_DAY);
+    public void setAlarmHour(int alarmHour) {
+        this.alarmHour = alarmHour;
     }
 
     public int getAlamrmMinute() {
         return alamrmMinute;
     }
 
-    public void setAlamrmMinute(Calendar calendar) {
-        this.alamrmMinute = calendar.get(Calendar.MINUTE);
+    public void setAlamrmMinute(int alamrmMinute) {
+        this.alamrmMinute = alamrmMinute;
     }
-
 }

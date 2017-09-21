@@ -24,16 +24,18 @@ import org.litepal.tablemanager.Connector;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity{
 
     private ArrayAdapter<String> adapter;
-    private List<String> alarmList = new ArrayList<String>();
+    private List<String> alarmList= new ArrayList<String>(Arrays.asList("无闹钟","无闹钟","无闹钟","无闹钟","无闹钟","无闹钟","无闹钟","可继续添加闹钟"));;
     private ListView listView;
-    private Calendar mCalendar,sysCalendar;
+    private Calendar mCalendar=Calendar.getInstance();;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
     private Intent alarmClockIntent;
@@ -52,12 +54,7 @@ public class MainActivity extends AppCompatActivity{
         Button bt_empty = (Button) findViewById(R.id.bt_empty);
         listView = (ListView) findViewById(R.id.listView);
 
-        mCalendar = Calendar.getInstance();
-        mCalendar.setTimeInMillis(System.currentTimeMillis());
-        mCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-
-        resetAlarmList();
-
+        updateAlarmList();
         adapter = new ArrayAdapter<String>
                 (this,android.R.layout.simple_list_item_1,alarmList);
         listView.setAdapter(adapter);
@@ -69,16 +66,23 @@ public class MainActivity extends AppCompatActivity{
                    List<AlarmTime> alarmTimes = DataSupport.select("millsTime","id").find(AlarmTime.class);
                    int j=0;
                    for(AlarmTime alarmTime:alarmTimes){
-                       String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(alarmTime.getCalendar().getTime());
+                       mCalendar.setTimeInMillis(alarmTime.getMillsTime());
+                       mCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                       String date=new SimpleDateFormat("yyyy年MM月dd E HH:mm:ss").format(mCalendar.getTime());
                        if(date.equals(alarmList.get(j))){
+                           Toast.makeText(MainActivity.this,"已删除"+alarmTime.getId(),Toast.LENGTH_SHORT).show();
                            DataSupport.delete(AlarmTime.class,alarmTime.getId());
+                           break;
                        }
                        j++;
                    }
-                   alarmList.remove(i);
+                   alarmList.set(i,"无闹钟");
+                   adapter.notifyDataSetChanged();
                    return true;
                }
         });
+
+        alarmClock();
 
         //打开添加闹钟
         bt_addAlarm.setOnClickListener(new View.OnClickListener() {
@@ -113,14 +117,11 @@ public class MainActivity extends AppCompatActivity{
         bt_empty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alarmList.clear();
                 DataSupport.deleteAll(AlarmTime.class);
                 resetAlarmList();
                 adapter.notifyDataSetChanged();
             }
         });
-
-        alarmClock();
     }
 
     class LocalReceiver extends BroadcastReceiver {
@@ -132,26 +133,66 @@ public class MainActivity extends AppCompatActivity{
             }
         }
     }
+
+    public void updateAlarmList(){
+        int count = 0;
+        Calendar sysCal = Calendar.getInstance();
+        sysCal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        List<AlarmTime> alarmTimes = DataSupport.order("millsTime desc").select("id").find(AlarmTime.class);
+        if(alarmTimes.isEmpty()){
+            Toast.makeText(MainActivity.this,"快添加闹钟吧",Toast.LENGTH_SHORT).show();
+        }else{
+            for(AlarmTime alarmTime:alarmTimes) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd E HH:mm:ss");
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(alarmTime.getMillsTime());
+                calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+                if(!alarmList.get(7).equals("可继续添加闹钟")){
+                    alarmList.set(7,"闹钟已添加满");
+                    adapter.notifyDataSetChanged();
+                    DataSupport.delete(AlarmTime.class,alarmTime.getId());
+                    Toast.makeText(MainActivity.this,"闹钟已满请重新添加",Toast.LENGTH_SHORT).show();
+                    break;
+                }//如果闹钟时间在系统时间之前则将时间加一天
+                if(calendar.getTimeInMillis()<sysCal.getTimeInMillis()){
+                    calendar.add(Calendar.DATE,1);
+                    alarmTime.setMillsTime(calendar.getTimeInMillis());
+                    alarmTime.save();
+                }
+                String dateS = simpleDateFormat.format(calendar.getTime());
+                if(alarmList.get(count).equals("无闹钟")){
+                    alarmList.set(count,dateS);
+                }
+                count++;
+            }
+        }
+    }
+
     //重置AlarmList
     public void resetAlarmList(){
-        List<AlarmTime> alarmTimes = DataSupport.findAll(AlarmTime.class);
-        for(AlarmTime alarmTime:alarmTimes){
-            String date=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(alarmTime.getCalendar().getTime());
-            alarmList.add(date);
+        for(int i =0;i<7;i++){
+            alarmList.set(i,"无闹钟");
         }
+        alarmList.set(7,"可继续添加闹钟");
     }
 
     //筛选距当前最近的一个闹钟
     public long minAlarmClock() {
         List<AlarmTime> alarmTimes = DataSupport.order("millsTime desc").find(AlarmTime.class);
-        return alarmTimes.get(0).getMillsTime();
+        long temp = 0;
+        if(!alarmTimes.isEmpty()){
+            temp = alarmTimes.get(0).getMillsTime();
+        }
+        return temp;
     }
 
     public void alarmClock() {
+        if(minAlarmClock() > 0) {
             Toast.makeText(MainActivity.this, "闹钟启动", Toast.LENGTH_SHORT).show();
             alarmClockIntent.setAction("android.intent.action.alarm");
             pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmClockIntent, 0);
             alarmManager.set(AlarmManager.RTC_WAKEUP, minAlarmClock(), pendingIntent);
+        }
     }
 }
 

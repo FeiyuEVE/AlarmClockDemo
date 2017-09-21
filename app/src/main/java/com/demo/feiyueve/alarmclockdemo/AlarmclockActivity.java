@@ -65,6 +65,9 @@ public class AlarmclockActivity extends AppCompatActivity {
         bt_alarmStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mediaPlayer.stop();
+                onStop();
+
                 Intent intent2 = new Intent();
                 intent2.setAction("android.intent.action.cancel");
                 localBroadcastManager.sendBroadcast(intent2);

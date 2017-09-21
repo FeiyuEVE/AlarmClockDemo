@@ -18,6 +18,7 @@ import org.litepal.crud.DataSupport;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public class AddAlarmActivity extends AppCompatActivity {
 
@@ -44,24 +45,20 @@ public class AddAlarmActivity extends AppCompatActivity {
         });
     }
     public void addAlarm(){
-        List<AlarmTime> alarmTimes = DataSupport.order("id desc").find(AlarmTime.class);
         Calendar calendar = Calendar.getInstance();
         Calendar sysCal = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, getHourTime());
         calendar.set(Calendar.MINUTE, getMinuteTime());
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        sysCal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         if(calendar.getTimeInMillis()<sysCal.getTimeInMillis()){
             calendar.add(Calendar.DATE,1);
         }
-        if(alarmTimes.get(0).getId()<7) {
-            AlarmTime alarmTime = new AlarmTime();
-            alarmTime.setCalendar(calendar);
-            alarmTime.setAlamrmMinute(calendar);
-            alarmTime.setAlarmHour(calendar);
-            alarmTime.setMillsTime(calendar);
-            alarmTime.save();
-        }else{
-            Toast.makeText(AddAlarmActivity.this,"闹钟已添加满\n请先删除其它闹钟",Toast.LENGTH_SHORT).show();
-        }
+        AlarmTime alarmTime = new AlarmTime();
+        alarmTime.setAlamrmMinute(calendar.get(Calendar.MINUTE));
+        alarmTime.setAlarmHour(calendar.get(Calendar.HOUR_OF_DAY));
+        alarmTime.setMillsTime(calendar.getTimeInMillis());
+        alarmTime.save();
     }
 
     public int getHourTime(){
