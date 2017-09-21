@@ -18,7 +18,6 @@ import org.litepal.crud.DataSupport;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 public class AddAlarmActivity extends AppCompatActivity {
 
@@ -49,8 +48,6 @@ public class AddAlarmActivity extends AppCompatActivity {
         Calendar sysCal = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, getHourTime());
         calendar.set(Calendar.MINUTE, getMinuteTime());
-        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        sysCal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         if(calendar.getTimeInMillis()<sysCal.getTimeInMillis()){
             calendar.add(Calendar.DATE,1);
         }

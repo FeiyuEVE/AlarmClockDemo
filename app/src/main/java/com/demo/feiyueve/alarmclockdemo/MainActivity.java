@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity{
         int count = 0;
         Calendar sysCal = Calendar.getInstance();
         sysCal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        List<AlarmTime> alarmTimes = DataSupport.order("millsTime desc").select("id").find(AlarmTime.class);
+        List<AlarmTime> alarmTimes = DataSupport.select("id","MillsTime").find(AlarmTime.class);
         if(alarmTimes.isEmpty()){
             Toast.makeText(MainActivity.this,"快添加闹钟吧",Toast.LENGTH_SHORT).show();
         }else{
@@ -153,15 +153,17 @@ public class MainActivity extends AppCompatActivity{
                     DataSupport.delete(AlarmTime.class,alarmTime.getId());
                     Toast.makeText(MainActivity.this,"闹钟已满请重新添加",Toast.LENGTH_SHORT).show();
                     break;
-                }//如果闹钟时间在系统时间之前则将时间加一天
+                }else{
+                    String dateS = simpleDateFormat.format(calendar.getTime());
+                    if(alarmList.get(count).equals("无闹钟")){
+                        alarmList.set(count,dateS);
+                    }
+                }
+                //如果闹钟时间在系统时间之前则将时间加一天
                 if(calendar.getTimeInMillis()<sysCal.getTimeInMillis()){
                     calendar.add(Calendar.DATE,1);
                     alarmTime.setMillsTime(calendar.getTimeInMillis());
                     alarmTime.save();
-                }
-                String dateS = simpleDateFormat.format(calendar.getTime());
-                if(alarmList.get(count).equals("无闹钟")){
-                    alarmList.set(count,dateS);
                 }
                 count++;
             }
@@ -178,7 +180,7 @@ public class MainActivity extends AppCompatActivity{
 
     //筛选距当前最近的一个闹钟
     public long minAlarmClock() {
-        List<AlarmTime> alarmTimes = DataSupport.order("millsTime desc").find(AlarmTime.class);
+        List<AlarmTime> alarmTimes = DataSupport.order("millsTime").find(AlarmTime.class);
         long temp = 0;
         if(!alarmTimes.isEmpty()){
             temp = alarmTimes.get(0).getMillsTime();
