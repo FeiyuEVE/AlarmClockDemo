@@ -76,11 +76,16 @@ public class MainActivity extends AppCompatActivity{
                        }
                        j++;
                    }
-                   alarmList.set(i,"无闹钟");
+                   if(i==7) {
+                       alarmList.set(i, "可继续添加闹钟");
+                   }else{
+                       alarmList.set(i, "无闹钟");
+                   }
                    adapter.notifyDataSetChanged();
                    return true;
                }
         });
+
 
         alarmClock();
 
@@ -88,9 +93,13 @@ public class MainActivity extends AppCompatActivity{
         bt_addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,AddAlarmActivity.class);
-                startActivity(intent);
-                MainActivity.this.finish();
+                if(alarmList.get(7).equals("可继续添加闹钟")) {
+                    Intent intent = new Intent(MainActivity.this, AddAlarmActivity.class);
+                    startActivity(intent);
+                    MainActivity.this.finish();
+                }else{
+                    Toast.makeText(MainActivity.this,"闹钟已添加满\n请先删除",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -138,7 +147,7 @@ public class MainActivity extends AppCompatActivity{
         int count = 0;
         Calendar sysCal = Calendar.getInstance();
         sysCal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-        List<AlarmTime> alarmTimes = DataSupport.select("id","MillsTime").find(AlarmTime.class);
+        List<AlarmTime> alarmTimes = DataSupport.order("MillsTime").find(AlarmTime.class);
         if(alarmTimes.isEmpty()){
             Toast.makeText(MainActivity.this,"快添加闹钟吧",Toast.LENGTH_SHORT).show();
         }else{
@@ -147,23 +156,14 @@ public class MainActivity extends AppCompatActivity{
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(alarmTime.getMillsTime());
                 calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
-                if(!alarmList.get(7).equals("可继续添加闹钟")){
-                    alarmList.set(7,"闹钟已添加满");
-                    adapter.notifyDataSetChanged();
-                    DataSupport.delete(AlarmTime.class,alarmTime.getId());
-                    Toast.makeText(MainActivity.this,"闹钟已满请重新添加",Toast.LENGTH_SHORT).show();
-                    break;
-                }else{
-                    String dateS = simpleDateFormat.format(calendar.getTime());
-                    if(alarmList.get(count).equals("无闹钟")){
-                        alarmList.set(count,dateS);
-                    }
-                }
-                //如果闹钟时间在系统时间之前则将时间加一天
                 if(calendar.getTimeInMillis()<sysCal.getTimeInMillis()){
                     calendar.add(Calendar.DATE,1);
                     alarmTime.setMillsTime(calendar.getTimeInMillis());
                     alarmTime.save();
+                }//如果闹钟时间在系统时间之前则将时间加一天
+                String dateS = simpleDateFormat.format(calendar.getTime());
+                if(count<8){
+                    alarmList.set(count,dateS);
                 }
                 count++;
             }
@@ -181,15 +181,15 @@ public class MainActivity extends AppCompatActivity{
     //筛选距当前最近的一个闹钟
     public long minAlarmClock() {
         List<AlarmTime> alarmTimes = DataSupport.order("millsTime").find(AlarmTime.class);
-        long temp = 0;
-        if(!alarmTimes.isEmpty()){
+        long temp = 10000000000L;
+        if(!alarmTimes.isEmpty()&&alarmTimes.get(0).getMillsTime()>temp){
             temp = alarmTimes.get(0).getMillsTime();
         }
         return temp;
     }
 
     public void alarmClock() {
-        if(minAlarmClock() > 0) {
+        if(minAlarmClock() > 10000000000L) {
             Toast.makeText(MainActivity.this, "闹钟启动", Toast.LENGTH_SHORT).show();
             alarmClockIntent.setAction("android.intent.action.alarm");
             pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmClockIntent, 0);
