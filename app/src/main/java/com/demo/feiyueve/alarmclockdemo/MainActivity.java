@@ -93,12 +93,14 @@ public class MainActivity extends AppCompatActivity{
         bt_addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(alarmList.get(7).equals("可继续添加闹钟")) {
-                    Intent intent = new Intent(MainActivity.this, AddAlarmActivity.class);
-                    startActivity(intent);
-                    MainActivity.this.finish();
-                }else{
-                    Toast.makeText(MainActivity.this,"闹钟已添加满\n请先删除",Toast.LENGTH_SHORT).show();
+                for(int i=0;i<7;i++) {
+                    if (alarmList.get(7).equals("可继续添加闹钟")||alarmList.get(i).equals("无闹钟")) {
+                        Intent intent = new Intent(MainActivity.this, AddAlarmActivity.class);
+                        startActivity(intent);
+                        MainActivity.this.finish();
+                    } else {
+                        Toast.makeText(MainActivity.this, "闹钟已添加满\n请先删除", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -162,8 +164,13 @@ public class MainActivity extends AppCompatActivity{
                     alarmTime.save();
                 }//如果闹钟时间在系统时间之前则将时间加一天
                 String dateS = simpleDateFormat.format(calendar.getTime());
-                if(count<8){
+                if(!alarmList.get(count).equals("无闹钟")&&count<8){
                     alarmList.set(count,dateS);
+                    break;
+                }
+                if(!alarmList.get(count).equals("可继续添加闹钟")&&count<8){
+                    alarmList.set(count,dateS);
+                    break;
                 }
                 count++;
             }
