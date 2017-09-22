@@ -6,13 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.demo.feiyueve.alarmclockdemo.Addweather"
     tools:layout_editor_absoluteY="81dp"
-    tools:layout_editor_absoluteX="0dp">
+    tools:layout_editor_absoluteX="0dp"
+    android:background="@mipmap/background2">
 
     <Button
         android:id="@+id/bt_addWeather"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_style"
         android:text="@string/bt_addWeather"
+        android:textSize="25sp"
+        android:textColor="#ff000d"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"

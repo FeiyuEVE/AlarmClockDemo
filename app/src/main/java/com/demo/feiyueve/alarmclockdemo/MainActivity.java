@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -65,24 +64,23 @@ public class MainActivity extends AppCompatActivity{
                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
                {
                    List<AlarmTime> alarmTimes = DataSupport.select("millsTime","id").find(AlarmTime.class);
-                   int j=0;
                    for(AlarmTime alarmTime:alarmTimes){
                        mCalendar.setTimeInMillis(alarmTime.getMillsTime());
                        mCalendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
                        String date=new SimpleDateFormat("yyyy年MM月dd E HH:mm:ss").format(mCalendar.getTime());
-                       if(date.equals(alarmList.get(j))){
+                       if(date.equals(alarmList.get((int)l))){
+                           if(i==7) {
+                           alarmList.set(i, "可继续添加闹钟");
+                            }else{
+                           alarmList.set(i, "无闹钟");
+                            }
+                           adapter.notifyDataSetChanged();
                            Toast.makeText(MainActivity.this,"已删除"+alarmTime.getId(),Toast.LENGTH_SHORT).show();
                            DataSupport.delete(AlarmTime.class,alarmTime.getId());
                            break;
                        }
-                       j++;
                    }
-                   if(i==7) {
-                       alarmList.set(i, "可继续添加闹钟");
-                   }else{
-                       alarmList.set(i, "无闹钟");
-                   }
-                   adapter.notifyDataSetChanged();
+
                    return true;
                }
         });

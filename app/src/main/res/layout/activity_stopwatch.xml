@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.demo.feiyueve.alarmclockdemo.StopwatchActivity"
     tools:layout_editor_absoluteY="81dp"
-    tools:layout_editor_absoluteX="0dp">
+    tools:layout_editor_absoluteX="0dp"
+    android:background="@mipmap/background1">
 
     <Chronometer
         android:id="@+id/chronometer2"
@@ -37,25 +38,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bt_stop" />
+            android:background="@drawable/button_style"
+            android:text="@string/bt_stop"
+            android:textSize="25sp"
+            android:textColor="#ff000d"/>
+
         <Button
             android:id="@+id/bt_pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bt_pause" />
+            android:background="@drawable/button_style"
+            android:text="@string/bt_pause"
+            android:textSize="25sp"
+            android:textColor="#ff000d"/>
+
         <Button
             android:id="@+id/bt_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bt_start" />
+            android:background="@drawable/button_style"
+            android:text="@string/bt_start"
+            android:textSize="25sp"
+            android:textColor="#ff000d"/>
+
         <Button
             android:id="@+id/bt_reset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/bt_reset" />
+            android:background="@drawable/button_style"
+            android:text="@string/bt_reset"
+            android:textSize="25sp"
+            android:textColor="#ff000d"/>
     </LinearLayout>
 
     <ListView

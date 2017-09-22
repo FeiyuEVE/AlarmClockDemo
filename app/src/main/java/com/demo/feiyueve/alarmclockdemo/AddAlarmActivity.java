@@ -52,8 +52,6 @@ public class AddAlarmActivity extends AppCompatActivity {
             calendar.add(Calendar.DATE,1);
         }
         AlarmTime alarmTime = new AlarmTime();
-        alarmTime.setAlamrmMinute(calendar.get(Calendar.MINUTE));
-        alarmTime.setAlarmHour(calendar.get(Calendar.HOUR_OF_DAY));
         alarmTime.setMillsTime(calendar.getTimeInMillis());
         alarmTime.save();
     }
