@@ -54,10 +54,11 @@ public class MainActivity extends AppCompatActivity{
         Button bt_empty = (Button) findViewById(R.id.bt_empty);
         listView = (ListView) findViewById(R.id.listView);
 
-        updateAlarmList();
+
         adapter = new ArrayAdapter<String>
                 (this,android.R.layout.simple_list_item_1,alarmList);
         listView.setAdapter(adapter);
+        updateAlarmList();
         adapter.notifyDataSetChanged();
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                @Override
@@ -93,15 +94,12 @@ public class MainActivity extends AppCompatActivity{
         bt_addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(int i=0;i<7;i++) {
-                    if (alarmList.get(7).equals("可继续添加闹钟")||alarmList.get(i).equals("无闹钟")) {
-                        Intent intent = new Intent(MainActivity.this, AddAlarmActivity.class);
-                        startActivity(intent);
-                        MainActivity.this.finish();
-                    } else {
-                        Toast.makeText(MainActivity.this, "闹钟已添加满\n请先删除", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                if (confirmNumber()) {
+                    Intent intent = new Intent(MainActivity.this, AddAlarmActivity.class);
+                    startActivity(intent);
+                    MainActivity.this.finish();
+                } else
+                {Toast.makeText(MainActivity.this, "闹钟已添加满\n请先删除", Toast.LENGTH_SHORT).show();}
             }
         });
 
@@ -146,7 +144,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void updateAlarmList(){
-        int count = 0;
         Calendar sysCal = Calendar.getInstance();
         sysCal.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         List<AlarmTime> alarmTimes = DataSupport.order("MillsTime").find(AlarmTime.class);
@@ -164,15 +161,12 @@ public class MainActivity extends AppCompatActivity{
                     alarmTime.save();
                 }//如果闹钟时间在系统时间之前则将时间加一天
                 String dateS = simpleDateFormat.format(calendar.getTime());
-                if(!alarmList.get(count).equals("无闹钟")&&count<8){
-                    alarmList.set(count,dateS);
-                    break;
+                for(int i=0;i<8;i++) {
+                    if (alarmList.get(i).equals("可继续添加闹钟") || alarmList.get(i).equals("无闹钟")) {
+                        alarmList.set(i, dateS);
+                        break;
+                    }
                 }
-                if(!alarmList.get(count).equals("可继续添加闹钟")&&count<8){
-                    alarmList.set(count,dateS);
-                    break;
-                }
-                count++;
             }
         }
     }
@@ -202,6 +196,21 @@ public class MainActivity extends AppCompatActivity{
             pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmClockIntent, 0);
             alarmManager.set(AlarmManager.RTC_WAKEUP, minAlarmClock(), pendingIntent);
         }
+    }
+
+    public boolean confirmNumber(){
+        int count = 0;
+        for(int i=0;i<7;i++) {
+            if (alarmList.get(7).equals("可继续添加闹钟")||alarmList.get(i).equals("无闹钟")) {
+                return true;
+            } else{
+                count++;
+            }
+        }
+        if(count == 7){
+            return false;
+        }
+        return true;
     }
 }
 
